@@ -32,12 +32,20 @@ void displayintro() {
 	printf("                           ───────────────────────                            \n");
 	printf("\n\n\n\n");
 }
-void deplacable(coord coordonnees, coord * autorise[][10], coord * plateau[][10]){
+int abs(int x){
+	if (x <0 ){
+		x=-x;
+	}
+	return x;
+}
+
+
+void deplacement_singe(coord movefrom, coord moveto, coord * autorise[][10], coord * plateau[][10]){
 	int varx,vary,tmpx,tmpy;
-	for (int i=0; i <3 ; i++){
-		for (int j=0; j<3; j++){
-			varx=coordonnees.x-1+i;
-			vary=coordonnees.y-1+i;
+	for (int i=0; i <5 ; i++){
+		for (int j=0; j<5; j++){
+			varx=movefrom.x-2+i;
+			vary=movefrom.y-2+j;
 			if (varx<0){
 				varx=0;
 			}
@@ -49,24 +57,95 @@ void deplacable(coord coordonnees, coord * autorise[][10], coord * plateau[][10]
 			}
 			else {
 				autorise[varx][vary]=0;
-				difx=varx-coordonnees.x;
-				dify=vary-coordonnees.y;
-				if (plateau[varx+difx][vary+dify]==NULL) {
-					autorise[varx+difx][vary+dify]=1;
-				}
-				else {
-					autorise[varx+difx][vary+dify]=0;
+				difx=varx-movefrom.x;
+				dify=vary-movefrom.y;
+				if (plateau[varx+difx][vary+dify]==NULL &&
+					  plateau[movefrom.x][movefrom.y]->type >= *plateau[varx][vary]->type){
+						autorise[varx+difx][vary+dify]=1;
+					}
+					else {
+						autorise[varx+difx][vary+dify]=0;
+					}
 				}
 			}
 		}
 	}
 }
 
-void deplacement_singe(coord cordonnees,  coord * plateau[][10], coord movefrom, coord moveto){
-	coord * autorise[10][10];
-	deplacable(movefrom, autorise,plateau)
-	printf("")
+
+void deplacable_lion(coord movefrom, coord moveto ,coord * autorise[][10], coord * plateau[][10]){
+	int varx,vary,tmpx,tmpy;
+	for (int i=0; i <3 ; i++){
+		for (int j=0; j<3; j++){
+			varx=movefrom.x-1+i;
+			vary=movefrom.y-1+i;
+			if (varx<0){
+				varx=0;
+			}
+			if (vary<0){
+				varx=0;
+			}
+			if (plateau[varx][vary]==NULL) {
+				autorise[varx][vary]=1;
+			}
+			else {
+				autorise[varx][vary]=0;
+				difx=varx-movefrom.x;
+				dify=vary-movefrom.y;
+				if (plateau[varx+difx][vary+dify]==NULL &&
+					plateau[movefrom.x][movefrom.y]->type >= *plateau[varx][vary]->type){
+						autorise[varx+difx][vary+dify]=1;
+					}
+					else {
+						autorise[varx+difx][vary+dify]=0;
+					}
+				}
+			}
+		}
+	}
+
+	void deplacement_dragon(coord movefrom, coord moveto ,coord * autorise[][10], coord * plateau[][10]){
+		int varx,vary,tmpx,tmpy;
+		for (int i=0; i <3 ; i++){
+			for (int j=0; j<3; j++){
+				varx=movefrom.x-1+i;
+				vary=movefrom.y-1+i;
+				if (varx<0){
+					varx=0;
+				}
+				if (vary<0){
+					varx=0;
+				}
+				if (plateau[varx][vary]==NULL) {
+					autorise[varx][vary]=1;
+				}
+			}
+		}
+	}
+
+
+void deplacement(coord movefrom, coord moveto,  coord * plateau[][10], int difx, int dify){
+	coord * autorise[10][10], tmp;
+	printf("Choisissez la case sur laquelle se déplacer\n");
+	for ( int i=0; i<10; i++){
+		for ( int j=0; j<10; j++){
+			if (plateau[moveto][moveto] == autorise[i][j]){
+				if (plateau[movefrom.x+difx][movefrom.y+dify]->team != plateau[movefrom.x][movefrom.y]->team){
+					tmp=moveto;
+					moveto=movefrom;
+					movefrom=tmp;
+					plateau[movefrom.x+difx][movefrom.y+dify]=NULL;
+				}
+				if (plateau[movefrom.x+difx][movefrom.y+dify]=NULL || (difx==1 || dify==0)){
+					tmp=moveto;
+					moveto=movefrom;
+					movefrom=tmp;
+				}
+			}
+		}
+	}
 }
+
 int requestmove(pion * plateau[][10],coord * movefrom,coord * moveto){
 	int val = 0;
 	switch (plateau[movefrom->x][movefrom->y]->type) {
